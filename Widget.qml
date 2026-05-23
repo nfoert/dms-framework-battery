@@ -4,6 +4,7 @@ import qs.Widgets
 import qs.Modules.Plugins
 import qs.Services
 import Quickshell
+import Quickshell.Services.UPower
 
 PluginComponent {
     id: root
@@ -14,6 +15,40 @@ PluginComponent {
 
     property var isActive: BatteryService.batteryAvailable && (BatteryService.isCharging || BatteryService.isPluggedIn)
     property var batteryPercent: BatteryService.batteryLevel
+
+    property var statsModel: [
+        {
+            label: "Health",
+            value: BatteryService.batteryHealth
+        },
+        {
+            label: "Capacity",
+            value: BatteryService.batteryCapacity.toFixed(1) + " Wh"
+        },
+        {
+            label: "Watts",
+            value: BatteryService.changeRate.toFixed(1) + " W"
+        }
+    ]
+
+    function setProfile(profile) {
+        if (typeof PowerProfiles === "undefined") {
+            ToastService.showError(I18n.tr("power-profiles-daemon not available"));
+            return;
+        }
+        PowerProfiles.profile = profile;
+        if (PowerProfiles.profile !== profile) {
+            ToastService.showError(I18n.tr("Failed to set power profile"));
+        }
+    }
+
+    function isActiveProfile(profile) {
+        if (typeof PowerProfiles === "undefined") {
+            return false;
+        }
+
+        return PowerProfiles.profile === profile;
+    }
 
     horizontalBarPill: Component {
         Row {
@@ -166,6 +201,28 @@ PluginComponent {
                             }
                         }
                     }
+
+                  
+                    DankButtonGroup {
+                        id: profileButtonGroup
+                        
+                        property var profileModel: (typeof PowerProfiles !== "undefined") ? [PowerProfile.PowerSaver, PowerProfile.Balanced].concat(PowerProfiles.hasPerformanceProfile ? [PowerProfile.Performance] : []) : [PowerProfile.PowerSaver, PowerProfile.Balanced, PowerProfile.Performance]
+                        property int currentProfileIndex: {
+                            if (typeof PowerProfiles === "undefined")
+                                return 1;
+                            return profileModel.findIndex(profile => root.isActiveProfile(profile));
+                        }
+
+                        model: profileModel.map(profile => Theme.getPowerProfileLabel(profile))
+                        currentIndex: currentProfileIndex
+                        selectionMode: "single"
+                        onSelectionChanged: (index, selected) => {
+                            if (!selected)
+                                return;
+                            root.setProfile(profileModel[index]);
+                        }
+                    }
+                    
                 }
             }
         }
