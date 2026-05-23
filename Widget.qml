@@ -277,8 +277,20 @@ PluginComponent {
                     
 
                     Column {
+                        spacing: Theme.spacingL
+
+                        Row {
+                            DankIcon {
+                                name: "battery_change"
+                                size: Theme.iconSize
+                            }
+
                         StyledText {
                             text: "Charge limit"
+                                font.pixelSize: Theme.fontSizeMedium
+                                font.weight: Font.Bold
+                                anchors.verticalCenter: parent.verticalCenter
+                            }
                         }
 
                         DankButtonGroup {
