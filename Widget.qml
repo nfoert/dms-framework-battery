@@ -5,6 +5,7 @@ import qs.Modules.Plugins
 import qs.Services
 import Quickshell
 import Quickshell.Services.UPower
+import Quickshell.Io
 
 PluginComponent {
     id: root
@@ -15,6 +16,7 @@ PluginComponent {
 
     property var isActive: BatteryService.batteryAvailable && (BatteryService.isCharging || BatteryService.isPluggedIn)
     property var batteryPercent: BatteryService.batteryLevel
+    property int chargeLimit: SettingsData.batteryChargeLimit
 
     property var statsModel: [
         {
@@ -48,6 +50,57 @@ PluginComponent {
         }
 
         return PowerProfiles.profile === profile;
+    }
+
+    function setChargeLimit(limit) {
+        chargeLimit = limit
+
+        SettingsData.set("batteryChargeLimit", limit);
+        SettingsData.saveSettings();
+
+        setHardwareChargeLimit(limit);
+    }
+
+    function setHardwareChargeLimit(limit) {
+        var process = chargeLimitProcessComponent.createObject(root, {
+            limit: limit
+        });
+
+        process.running = true;
+    }
+
+    Component {
+        id: chargeLimitProcessComponent
+
+        Process {
+            property int limit: 100
+
+            command: [
+                "pkexec",
+                "ectool",
+                "fwchargelimit",
+                limit.toString()
+            ]
+
+            stdout: SplitParser {
+                onRead: line => console.log("ectool:", line)
+            }
+
+            stderr: SplitParser {
+                onRead: line => {
+                    if (line.trim()) {
+                        ToastService.showError("ectool error", line)
+                    }
+                }
+            }
+
+            onExited: (exitCode) => {
+                if (exitCode !== 0) {
+                    ToastService.showError("Failed to set charge limit (" + exitCode + ")")
+                }
+                destroy()
+            }
+        }
     }
 
     horizontalBarPill: Component {
@@ -202,10 +255,9 @@ PluginComponent {
                         }
                     }
 
-                  
                     DankButtonGroup {
                         id: profileButtonGroup
-                        
+
                         property var profileModel: (typeof PowerProfiles !== "undefined") ? [PowerProfile.PowerSaver, PowerProfile.Balanced].concat(PowerProfiles.hasPerformanceProfile ? [PowerProfile.Performance] : []) : [PowerProfile.PowerSaver, PowerProfile.Balanced, PowerProfile.Performance]
                         property int currentProfileIndex: {
                             if (typeof PowerProfiles === "undefined")
@@ -223,6 +275,26 @@ PluginComponent {
                         }
                     }
                     
+
+                    Column {
+                        StyledText {
+                            text: "Charge limit"
+                        }
+
+                        DankButtonGroup {
+                            property var limitModel: [60, 75, 80, 90, 100]
+                            property int currentLimitIndex: limitModel.indexOf(root.chargeLimit)
+
+                            model: limitModel.map(limit => limit + "%")
+                            currentIndex: currentLimitIndex
+                            selectionMode: "single"
+                            onSelectionChanged: (index, selected) => {
+                                if (!selected) return;
+
+                                root.setChargeLimit(limitModel[index]);
+                            }
+                        }
+                    }
                 }
             }
         }
