@@ -23,15 +23,11 @@ PluginComponent {
                 name: BatteryService.getBatteryIcon()
                 size: Theme.iconSizeSmall
                 color: Theme.primary
-
-                anchors.verticalCenter: parent.verticalCenter
             }
 
             StyledText {
                 text: BatteryService.batteryLevel + "%"
                 font.pixelSize: Theme.fontSizeSmall
-
-                anchors.verticalCenter: parent.verticalCenter
             }
         }
     }
@@ -44,15 +40,11 @@ PluginComponent {
                 name: BatteryService.getBatteryIcon()
                 size: Theme.iconSizeSmall
                 color: Theme.primary
-
-                anchors.verticalCenter: parent.verticalCenter
             }
 
             StyledText {
                 text: BatteryService.batteryLevel + "%"
                 font.pixelSize: Theme.fontSizeSmall
-
-                anchors.verticalCenter: parent.verticalCenter
             }
         }
     }
@@ -63,36 +55,34 @@ PluginComponent {
 
             Item {
                 width: parent.width
-                height: 200
+                implicitHeight: content.implicitHeight + Theme.spacingL * 2
 
                 Column {
                     id: content
-                    width: parent.width
-                    anchors.fill: parent
                     anchors.margins: Theme.spacingL
-
+                    anchors.fill: parent
                     spacing: Theme.spacingL
-                    height: children
-                    anchors.verticalCenter: parent.verticalCenter
 
                     Row {
                         width: parent.width
                         spacing: Theme.spacingM
 
                         DankIcon {
+                            id: batteryIcon
                             name: BatteryService.getBatteryIcon()
                             size: Theme.iconSizeLarge
                             color: Theme.primary
                         }
 
                         Column {
+                            id: batteryInfo
+
                             spacing: Theme.spacingXS
-                            width: parent.width - Theme.iconSizeLarge - Theme.iconSizeLarge- Theme.spacingM - Theme.spacingM
-                            anchors.verticalCenter: parent.verticalCenter
+
+                            width: parent.width - batteryIcon.width - closeButton.width - Theme.spacingM * 4
 
                             Row {
                                 spacing: Theme.spacingS
-                                
 
                                 StyledText {
                                     text: BatteryService.batteryLevel + "%"
@@ -103,6 +93,9 @@ PluginComponent {
                                 StyledText {
                                     text: BatteryService.batteryStatus
                                     font.pixelSize: Theme.fontSizeLarge
+
+                                    elide: Text.ElideRight
+                                    width: batteryInfo.width - 80
                                 }
                             }
 
@@ -110,16 +103,26 @@ PluginComponent {
                                 text: BatteryService.formatTimeRemaining() + " remaining"
                                 font.pixelSize: Theme.fontSizeSmall
                                 opacity: 0.7
+
                                 visible: BatteryService.batteryAvailable
+
+                                elide: Text.ElideRight
+                                width: batteryInfo.width
                             }
                         }
 
+                        Item {
+                            width: 1
+                            height: 1
+                        }
+
                         DankActionButton {
+                            id: closeButton
+
                             iconName: "Close"
-                            anchors.verticalCenter: parent.verticalCenter
-                            onClicked: {
-                                root.closePopout()
-                            }
+
+
+                            onClicked: root.closePopout()
                         }
                     }
 
@@ -128,42 +131,36 @@ PluginComponent {
                         spacing: Theme.spacingM
 
                         Repeater {
-                            model: 3
+                            model: statsModel
 
                             StyledRect {
-                                width: (parent.width - Theme.spacingM * 2) / 3
-                                height: 90
+                                width: Math.max(
+                                    90,
+                                    (parent.width - Theme.spacingM * 2) / 3
+                                )
+
+                                implicitHeight: 90
+
                                 color: Theme.surfaceContainerHighest
                                 radius: Theme.cornerRadius
+
                                 border.width: 1
                                 border.color: Theme.surfaceContainerHigh
 
                                 Column {
                                     anchors.centerIn: parent
-                                    spacing: Theme.spacingS
+                                    spacing: Theme.spacingXS
 
                                     StyledText {
-                                        text: modelData === 0
-                                            ? "Health"
-                                            : modelData === 1
-                                            ? "Capacity"
-                                            : "Watts"
-
+                                        text: modelData.label
                                         font.pixelSize: Theme.fontSizeSmall
                                         color: Theme.primary
-                                        anchors.horizontalCenter: parent.horizontalCenter
                                     }
 
                                     StyledText {
-                                        text: modelData === 0
-                                            ? BatteryService.batteryHealth
-                                            : modelData === 1
-                                            ? BatteryService.batteryCapacity.toFixed(1) + " Wh"
-                                            : BatteryService.changeRate.toFixed(1) + " W"
-
+                                        text: modelData.value
                                         font.pixelSize: Theme.fontSizeLarge
                                         font.weight: Font.Bold
-                                        anchors.horizontalCenter: parent.horizontalCenter
                                     }
                                 }
                             }
