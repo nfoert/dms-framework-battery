@@ -63,14 +63,17 @@ PluginComponent {
 
             Item {
                 width: parent.width
-                height: root.popoutHeight
-                        - popoutColumn.headerHeight
-                        - popoutColumn.detailsHeight
-                        - Theme.spacingXL
+                height: 200
 
                 Column {
+                    id: content
+                    width: parent.width
                     anchors.fill: parent
+                    anchors.margins: Theme.spacingL
+
                     spacing: Theme.spacingL
+                    height: children
+                    anchors.verticalCenter: parent.verticalCenter
 
                     Row {
                         width: parent.width
@@ -84,10 +87,12 @@ PluginComponent {
 
                         Column {
                             spacing: Theme.spacingXS
-                            // width: parent.width - Theme.iconSizeLarge - Theme.spacingM
+                            width: parent.width - Theme.iconSizeLarge - Theme.iconSizeLarge- Theme.spacingM - Theme.spacingM
+                            anchors.verticalCenter: parent.verticalCenter
 
                             Row {
                                 spacing: Theme.spacingS
+                                
 
                                 StyledText {
                                     text: BatteryService.batteryLevel + "%"
@@ -105,7 +110,7 @@ PluginComponent {
                                 text: BatteryService.formatTimeRemaining() + " remaining"
                                 font.pixelSize: Theme.fontSizeSmall
                                 opacity: 0.7
-                                visible: !BatteryService.batteryAvailable
+                                visible: BatteryService.batteryAvailable
                             }
                         }
 
