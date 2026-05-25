@@ -254,20 +254,24 @@ PluginComponent {
                             }
 
                             StyledText {
+                                Layout.fillWidth: true
+
                                 text: BatteryService.formatTimeRemaining() + " remaining"
                                 font.pixelSize: Theme.fontSizeSmall
                                 opacity: 0.7
 
-                                visible: !BatteryService.isPluggedIn
-
-                                elide: Text.ElideRight
-                                width: batteryInfo.width
+                                visible: !BatteryService.isPluggedIn && !(BatteryService.formatTimeRemaining() === "Unknown")
                             }
-                        }
 
-                        Item {
-                            width: 1
-                            height: 1
+                            StyledText {
+                                Layout.fillWidth: true
+
+                                text: BatteryService.formatTimeRemaining() + " to full"
+                                font.pixelSize: Theme.fontSizeSmall
+                                opacity: 0.7
+
+                                visible: BatteryService.isPluggedIn && !(BatteryService.formatTimeRemaining() === "Unknown")
+                            }
                         }
 
                         DankActionButton {
