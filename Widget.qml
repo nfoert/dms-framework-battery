@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.Layouts
 import qs.Common
 import qs.Widgets
 import qs.Modules.Plugins
@@ -170,7 +171,7 @@ PluginComponent {
     }
 
     horizontalBarPill: Component {
-        Row {
+        RowLayout {
             spacing: Theme.spacingXS
 
             DankIcon {
@@ -187,7 +188,7 @@ PluginComponent {
     }
 
     verticalBarPill: Component {
-        Column {
+        ColumnLayout {
             spacing: Theme.spacingXS
 
             DankIcon {
@@ -211,31 +212,30 @@ PluginComponent {
                 width: parent.width
                 implicitHeight: content.implicitHeight + Theme.spacingL * 2
 
-                Column {
+                ColumnLayout {
                     id: content
-                    anchors.margins: Theme.spacingL
-                    anchors.fill: parent
+                    
+                    x: Theme.spacingL
+                    y: Theme.spacingL
+                    width: parent.width - Theme.spacingL * 2
+
                     spacing: Theme.spacingL
 
-                    Row {
-                        width: parent.width
+                    RowLayout {
+                        Layout.fillWidth: true
                         spacing: Theme.spacingM
 
                         DankIcon {
-                            id: batteryIcon
                             name: BatteryService.getBatteryIcon()
                             size: Theme.iconSizeLarge
                             color: getBatteryIconColor()
                         }
 
-                        Column {
-                            id: batteryInfo
-
+                        ColumnLayout {
+                            Layout.fillWidth: true
                             spacing: Theme.spacingXS
 
-                            width: parent.width - batteryIcon.width - closeButton.width - Theme.spacingM * 4
-
-                            Row {
+                            RowLayout {
                                 spacing: Theme.spacingS
 
                                 StyledText {
@@ -245,11 +245,10 @@ PluginComponent {
                                 }
 
                                 StyledText {
+                                    Layout.fillWidth: true
+
                                     text: BatteryService.batteryStatus
                                     font.pixelSize: Theme.fontSizeLarge
-
-                                    elide: Text.ElideRight
-                                    width: batteryInfo.width - 80
                                 }
                             }
 
@@ -275,29 +274,22 @@ PluginComponent {
                         }
 
                         DankActionButton {
-                            id: closeButton
-
                             iconName: "Close"
-
-
                             onClicked: root.closePopout()
                         }
                     }
 
-                    Row {
-                        width: parent.width
+                    RowLayout {
+                        Layout.fillWidth: true
                         spacing: Theme.spacingM
 
                         Repeater {
                             model: statsModel
 
                             StyledRect {
-                                width: Math.max(
-                                    90,
-                                    (parent.width - Theme.spacingM * 2) / 3
-                                )
-
-                                implicitHeight: 90
+                                Layout.fillWidth: true
+                                Layout.minimumWidth: 90
+                                Layout.preferredHeight: 90
 
                                 color: Theme.surfaceContainerHighest
                                 radius: Theme.cornerRadius
@@ -346,10 +338,10 @@ PluginComponent {
                     }
                     
 
-                    Column {
+                    ColumnLayout {
                         spacing: Theme.spacingL
 
-                        Row {
+                        RowLayout {
                             DankIcon {
                                 name: "battery_change"
                                 size: Theme.iconSize
@@ -359,7 +351,6 @@ PluginComponent {
                             text: "Charge limit"
                                 font.pixelSize: Theme.fontSizeMedium
                                 font.weight: Font.Bold
-                                anchors.verticalCenter: parent.verticalCenter
                             }
                         }
 
@@ -396,7 +387,7 @@ PluginComponent {
                             }
                         }
 
-                        Row {
+                        RowLayout {
                             spacing: Theme.spacingL
                             visible: root.chargeLimitCustom
 
@@ -428,6 +419,6 @@ PluginComponent {
         }
     }
 
-    popoutWidth: 400
+    popoutWidth: 450
     popoutHeight: 500
 }
