@@ -77,6 +77,16 @@ PluginComponent {
 
         process.running = true;
     }
+    
+    function getBatteryIconColor() {
+        if (BatteryService.isLowBattery && !BatteryService.isCharging) {
+            return Theme.error;
+        }
+        if (BatteryService.isCharging || BatteryService.isPluggedIn) {
+            return Theme.primary;
+        }
+        return Theme.surfaceText;
+    }
 
     Component {
         id: chargeLimitProcessComponent
@@ -166,7 +176,7 @@ PluginComponent {
             DankIcon {
                 name: BatteryService.getBatteryIcon()
                 size: Theme.iconSizeSmall
-                color: Theme.primary
+                color: getBatteryIconColor()
             }
 
             StyledText {
@@ -183,7 +193,7 @@ PluginComponent {
             DankIcon {
                 name: BatteryService.getBatteryIcon()
                 size: Theme.iconSizeSmall
-                color: Theme.primary
+                color: getBatteryIconColor()
             }
 
             StyledText {
@@ -215,7 +225,7 @@ PluginComponent {
                             id: batteryIcon
                             name: BatteryService.getBatteryIcon()
                             size: Theme.iconSizeLarge
-                            color: Theme.primary
+                            color: getBatteryIconColor()
                         }
 
                         Column {
