@@ -17,6 +17,7 @@ PluginComponent {
     property var isActive: BatteryService.batteryAvailable && (BatteryService.isCharging || BatteryService.isPluggedIn)
     property var batteryPercent: BatteryService.batteryLevel
     property int chargeLimit: SettingsData.batteryChargeLimit
+    property bool chargeLimitCustom: ![60, 70, 80, 90, 100].includes(chargeLimit)
 
     property var statsModel: [
         {
@@ -55,16 +56,24 @@ PluginComponent {
     function setChargeLimit(limit) {
         chargeLimit = limit
 
-        SettingsData.set("batteryChargeLimit", limit);
-        SettingsData.saveSettings();
+        chargeLimitCustom = ![60, 80, 100].includes(limit)
 
-        setHardwareChargeLimit(limit);
+        SettingsData.set("batteryChargeLimit", limit)
+        SettingsData.saveSettings()
+
+        setHardwareChargeLimit(limit)
     }
 
     function setHardwareChargeLimit(limit) {
         var process = chargeLimitProcessComponent.createObject(root, {
             limit: limit
         });
+
+        process.running = true;
+    }
+
+    function getHardwareChargeLimit() {
+        var process = getChargeLimitProcessComponent.createObject(root);
 
         process.running = true;
     }
@@ -98,6 +107,53 @@ PluginComponent {
                 if (exitCode !== 0) {
                     ToastService.showError("Failed to set charge limit (" + exitCode + ")")
                 }
+                destroy()
+            }
+        }
+    }
+
+    Component {
+        id: getChargeLimitProcessComponent
+
+        Process {
+            property int limit: 100
+
+            command: [
+                "pkexec",
+                "ectool",
+                "fwchargelimit",
+            ]
+
+            stdout: SplitParser {
+                onRead: line => console.log("ectool:", line)
+            }
+
+            stderr: SplitParser {
+                onRead: line => {
+                    if (line.trim()) {
+                        ToastService.showError("ectool error", line)
+                    }
+                }
+            }
+
+            onExited: exitCode => {
+                if (exitCode !== 0) {
+                    console.error("Failed to get charge limit")
+                    destroy()
+                    return
+                }
+
+                // Extract first number from output
+                let match = output.match(/(\d+)/)
+
+                if (match) {
+                    let limit = parseInt(match[1])
+
+                    console.log("Detected charge limit:", limit)
+
+                    root.chargeLimit = limit
+                }
+
                 destroy()
             }
         }
@@ -286,7 +342,7 @@ PluginComponent {
                             }
 
                         StyledText {
-                            text: "Charge limit"
+                            text: "Charge limit" + root.chargeLimit
                                 font.pixelSize: Theme.fontSizeMedium
                                 font.weight: Font.Bold
                                 anchors.verticalCenter: parent.verticalCenter
@@ -294,16 +350,61 @@ PluginComponent {
                         }
 
                         DankButtonGroup {
-                            property var limitModel: [60, 75, 80, 90, 100]
-                            property int currentLimitIndex: limitModel.indexOf(root.chargeLimit)
+                            id: chargeLimitModeButtonGroup
+
+                            model: ["Preset", "Custom"]
+                            currentIndex: root.chargeLimitCustom ? 1 : 0
+                            selectionMode: "single"
+                            onSelectionChanged: (index, selected) => {
+                                if (!selected) 
+                                    return;
+                                root.chargeLimitCustom = index === 1;
+                            }
+                        }
+
+                        DankButtonGroup {
+                            id: chargeLimitButtonGroup
+
+                            visible: !root.chargeLimitCustom
+
+                            property var limitModel: [60, 70, 80, 90, 100]
 
                             model: limitModel.map(limit => limit + "%")
-                            currentIndex: currentLimitIndex
+                            currentIndex: {
+                                return limitModel.indexOf(root.chargeLimit);
+                            }
                             selectionMode: "single"
                             onSelectionChanged: (index, selected) => {
                                 if (!selected) return;
 
+                                root.chargeLimitCustom = false;
                                 root.setChargeLimit(limitModel[index]);
+                            }
+                        }
+
+                        Row {
+                            spacing: Theme.spacingL
+                            visible: root.chargeLimitCustom
+
+                            DankTextField {
+                                id: chargeLimitTextField
+                                text: root.chargeLimit
+                                placeholderText: "Limit"
+                            }
+
+                            DankButton {
+                                text: "Apply"
+
+                                onClicked: {
+                                    if (chargeLimitTextField.text === "" || chargeLimitTextField.text === null) {
+                                        return;
+                                    }
+                                    root.setChargeLimit(chargeLimitTextField.text.replace("%", ""));
+
+                                    if ([60, 70, 80, 90, 100].includes(parseInt(chargeLimitTextField.text))) {
+                                        root.chargeLimitCustom = false;
+                                    }
+                                }
                             }
                         }
                     }
