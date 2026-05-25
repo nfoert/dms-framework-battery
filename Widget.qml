@@ -248,7 +248,7 @@ PluginComponent {
                                 font.pixelSize: Theme.fontSizeSmall
                                 opacity: 0.7
 
-                                visible: BatteryService.batteryAvailable
+                                visible: !BatteryService.isPluggedIn
 
                                 elide: Text.ElideRight
                                 width: batteryInfo.width
@@ -342,7 +342,7 @@ PluginComponent {
                             }
 
                         StyledText {
-                            text: "Charge limit" + root.chargeLimit
+                            text: "Charge limit"
                                 font.pixelSize: Theme.fontSizeMedium
                                 font.weight: Font.Bold
                                 anchors.verticalCenter: parent.verticalCenter
@@ -394,6 +394,7 @@ PluginComponent {
 
                             DankButton {
                                 text: "Apply"
+                                iconName: "Check"
 
                                 onClicked: {
                                     if (chargeLimitTextField.text === "" || chargeLimitTextField.text === null) {
