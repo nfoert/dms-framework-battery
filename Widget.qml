@@ -30,7 +30,7 @@ PluginComponent {
         },
         {
             label: "Watts",
-            value: BatteryService.changeRate.toFixed(1) + " W"
+            value: BatteryService.isCharging ? "+" : "-" + BatteryService.changeRate.toFixed(1) + " W"
         }
     ]
 
