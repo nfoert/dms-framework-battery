@@ -31,7 +31,7 @@ dms ipc call plugins reload dmsFrameworkBattery
 - [x] Get custom charge limit working
 - [x] Fix remaining showing when plugged in
 - [x] Adjust icon colors for charging / discharging / low battery
-- [ ] Use `RowLayout` and `ColumnLayout`
-- [ ] Fix text alignment in stat cards
+- [x] Use `RowLayout` and `ColumnLayout`
+- [x] Fix text alignment in stat cards
 - [ ] Add widget settings for showing time remaining and wattage used
 - [ ] Only set the DMS settings for charge limit if the request to set the hardware charge limit succeeded

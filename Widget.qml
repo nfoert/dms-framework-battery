@@ -297,7 +297,7 @@ PluginComponent {
                                 border.width: 1
                                 border.color: Theme.surfaceContainerHigh
 
-                                Column {
+                                ColumnLayout {
                                     anchors.centerIn: parent
                                     spacing: Theme.spacingXS
 
@@ -305,12 +305,15 @@ PluginComponent {
                                         text: modelData.label
                                         font.pixelSize: Theme.fontSizeSmall
                                         color: Theme.primary
+                                        Layout.alignment: Text.AlignHCenter
                                     }
 
                                     StyledText {
+                                        
                                         text: modelData.value
                                         font.pixelSize: Theme.fontSizeLarge
                                         font.weight: Font.Bold
+                                        Layout.alignment: Text.AlignHCenter
                                     }
                                 }
                             }
