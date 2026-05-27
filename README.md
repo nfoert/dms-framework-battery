@@ -38,4 +38,4 @@ dms ipc call plugins reload dmsFrameworkBattery
 - [x] Hide wattage on the bar widget if it's zero
 - [x] Wattage seems to always show `-` instead of `+` when plugged in
 - [x] Only set the DMS settings for charge limit if the request to set the hardware charge limit succeeded
-- [ ] Add button for fetching the current hardware charge limit
+- [x] Add button for fetching the current hardware charge limit

@@ -377,10 +377,18 @@ PluginComponent {
                                 size: Theme.iconSize
                             }
 
-                        StyledText {
-                            text: "Charge limit"
+                            StyledText {
+                                text: "Charge limit"
                                 font.pixelSize: Theme.fontSizeMedium
                                 font.weight: Font.Bold
+                            }
+
+                            DankActionButton {
+                                iconName: "rotate_right"
+                                onClicked: {
+                                    root.getHardwareChargeLimit();
+                                }
+                                tooltipText: "Get current hardware charge limit"
                             }
                         }
 
