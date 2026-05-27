@@ -1,12 +1,12 @@
-import QtQuick
-import QtQuick.Layouts
+import Quickshell
+import Quickshell.Services.UPower
+import Quickshell.Io
 import qs.Common
 import qs.Widgets
 import qs.Modules.Plugins
 import qs.Services
-import Quickshell
-import Quickshell.Services.UPower
-import Quickshell.Io
+import QtQuick
+import QtQuick.Layouts
 
 PluginComponent {
     id: root
@@ -18,8 +18,6 @@ PluginComponent {
 
     property var iconName: BatteryService.getBatteryIcon()
 
-    property var isActive: BatteryService.batteryAvailable && (BatteryService.isCharging || BatteryService.isPluggedIn)
-    property var batteryPercent: BatteryService.batteryLevel
     property int chargeLimit: SettingsData.batteryChargeLimit
     property bool chargeLimitCustom: ![60, 70, 80, 90, 100].includes(chargeLimit)
 
@@ -38,6 +36,11 @@ PluginComponent {
         }
     ]
 
+    /**
+    * Sets the power profile
+    *
+    * @param {PowerProfile} profile
+    */
     function setProfile(profile) {
         if (typeof PowerProfiles === "undefined") {
             ToastService.showError(I18n.tr("power-profiles-daemon not available"));
@@ -49,6 +52,11 @@ PluginComponent {
         }
     }
 
+    /**
+    * Checks if the power profile is active
+    *
+    * @param {PowerProfile} profile
+    */
     function isActiveProfile(profile) {
         if (typeof PowerProfiles === "undefined") {
             return false;
@@ -57,6 +65,11 @@ PluginComponent {
         return PowerProfiles.profile === profile;
     }
 
+    /**
+    * Sets the charge limit in DMS settings
+    *
+    * @param {int} limit
+    */
     function setChargeLimit(limit) {
         chargeLimit = limit
 
@@ -66,6 +79,11 @@ PluginComponent {
         SettingsData.saveSettings()
     }
 
+    /**
+    * Sets the charge limit to the battery controller
+    *
+    * @param {int} limit
+    */
     function setHardwareChargeLimit(limit) {
         var process = chargeLimitProcessComponent.createObject(root, {
             limit: limit
@@ -74,12 +92,18 @@ PluginComponent {
         process.running = true;
     }
 
+    /**
+    * Gets the charge limit from the battery controller
+    */
     function getHardwareChargeLimit() {
         var process = getChargeLimitProcessComponent.createObject(root);
 
         process.running = true;
     }
     
+    /**
+    * Gets the battery icon color
+    */
     function getBatteryIconColor() {
         if (BatteryService.isLowBattery && !BatteryService.isCharging) {
             return Theme.error;
@@ -90,6 +114,7 @@ PluginComponent {
         return Theme.surfaceText;
     }
 
+    // Process for setting the charge limit
     Component {
         id: chargeLimitProcessComponent
 
@@ -129,6 +154,7 @@ PluginComponent {
         }
     }
 
+    // Process for getting the charge limit
     Component {
         id: getChargeLimitProcessComponent
 
@@ -240,6 +266,7 @@ PluginComponent {
                 width: parent.width
                 implicitHeight: content.implicitHeight + Theme.spacingL * 2
 
+                // Main content layout
                 ColumnLayout {
                     id: content
                     
@@ -249,6 +276,7 @@ PluginComponent {
 
                     spacing: Theme.spacingL
 
+                    // Header
                     RowLayout {
                         Layout.fillWidth: true
                         spacing: Theme.spacingM
@@ -307,6 +335,7 @@ PluginComponent {
                         }
                     }
 
+                    // Stats cards
                     RowLayout {
                         Layout.fillWidth: true
                         spacing: Theme.spacingM
@@ -347,6 +376,7 @@ PluginComponent {
                         }
                     }
 
+                    // Power profile selector
                     DankButtonGroup {
                         id: profileButtonGroup
 
@@ -367,10 +397,11 @@ PluginComponent {
                         }
                     }
                     
-
+                    // Charge limit
                     ColumnLayout {
                         spacing: Theme.spacingL
 
+                        // Header
                         RowLayout {
                             DankIcon {
                                 name: "battery_change"
@@ -392,6 +423,7 @@ PluginComponent {
                             }
                         }
 
+                        // Charge limit mode
                         DankButtonGroup {
                             id: chargeLimitModeButtonGroup
 
@@ -405,6 +437,7 @@ PluginComponent {
                             }
                         }
 
+                        // Preset charge limit selector
                         DankButtonGroup {
                             id: chargeLimitButtonGroup
 
@@ -425,6 +458,7 @@ PluginComponent {
                             }
                         }
 
+                        // Custom charge limit
                         RowLayout {
                             spacing: Theme.spacingL
                             visible: root.chargeLimitCustom
