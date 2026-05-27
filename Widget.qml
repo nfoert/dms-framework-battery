@@ -64,8 +64,6 @@ PluginComponent {
 
         SettingsData.set("batteryChargeLimit", limit)
         SettingsData.saveSettings()
-
-        setHardwareChargeLimit(limit)
     }
 
     function setHardwareChargeLimit(limit) {
@@ -120,7 +118,12 @@ PluginComponent {
             onExited: (exitCode) => {
                 if (exitCode !== 0) {
                     ToastService.showError("Failed to set charge limit (" + exitCode + ")")
+                    destroy()
+                    return
                 }
+
+                setChargeLimit(limit);
+
                 destroy()
             }
         }
@@ -165,7 +168,8 @@ PluginComponent {
 
                     console.log("Detected charge limit:", limit)
 
-                    root.chargeLimit = limit
+                    root.chargeLimit = limit;
+                    setChargeLimit(limit);
                 }
 
                 destroy()
@@ -409,7 +413,7 @@ PluginComponent {
                                 if (!selected) return;
 
                                 root.chargeLimitCustom = false;
-                                root.setChargeLimit(limitModel[index]);
+                                root.setHardwareChargeLimit(limitModel[index]);
                             }
                         }
 
@@ -431,7 +435,7 @@ PluginComponent {
                                     if (chargeLimitTextField.text === "" || chargeLimitTextField.text === null) {
                                         return;
                                     }
-                                    root.setChargeLimit(chargeLimitTextField.text.replace("%", ""));
+                                    root.setHardwareChargeLimit(chargeLimitTextField.text.replace("%", ""));
 
                                     if ([60, 70, 80, 90, 100].includes(parseInt(chargeLimitTextField.text))) {
                                         root.chargeLimitCustom = false;
