@@ -34,7 +34,7 @@ PluginComponent {
         },
         {
             label: "Watts",
-            value: BatteryService.isCharging ? "+" : "-" + BatteryService.changeRate.toFixed(1) + " W"
+            value: (BatteryService.isCharging || BatteryService.isPluggedIn) && BatteryService.changeRate ? "+" : "-" + BatteryService.changeRate.toFixed(1) + " W"
         }
     ]
 
@@ -196,7 +196,7 @@ PluginComponent {
             }
 
             StyledText {
-                text: BatteryService.isCharging ? "+" : "-" + BatteryService.changeRate.toFixed(1) + "W"
+                text: (BatteryService.isCharging || BatteryService.isPluggedIn) && BatteryService.changeRate ? "+" : "-" + BatteryService.changeRate.toFixed(1) + "W"
                 visible: showWatts && BatteryService.changeRate
                 opacity: 0.7
                 font.pixelSize: Theme.fontSizeSmall
@@ -220,14 +220,7 @@ PluginComponent {
             }
 
             StyledText {
-                text: BatteryService.formatTimeRemaining()
-                visible: showTimeRemaining && !(BatteryService.formatTimeRemaining() === "Unknown")
-                opacity: 0.7
-                font.pixelSize: Theme.fontSizeSmall
-            }
-
-            StyledText {
-                text: BatteryService.isCharging ? "+" : "-" + BatteryService.changeRate.toFixed(1) + "W"
+                text: BatteryService.isCharging || BatteryService.isPluggedIn ? "+" : "-" + BatteryService.changeRate.toFixed(1) + "W"
                 visible: showWatts && BatteryService.changeRate
                 opacity: 0.7
                 font.pixelSize: Theme.fontSizeSmall
@@ -340,7 +333,6 @@ PluginComponent {
                                     }
 
                                     StyledText {
-                                        
                                         text: modelData.value
                                         font.pixelSize: Theme.fontSizeLarge
                                         font.weight: Font.Bold
