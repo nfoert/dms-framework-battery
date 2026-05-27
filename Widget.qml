@@ -13,6 +13,9 @@ PluginComponent {
 
     layerNamespacePlugin: "dmsFrameworkBattery"
 
+    property bool showTimeRemaining: pluginData.showTimeRemaining || false
+    property bool showWatts: pluginData.showWatts || false
+
     property var iconName: BatteryService.getBatteryIcon()
 
     property var isActive: BatteryService.batteryAvailable && (BatteryService.isCharging || BatteryService.isPluggedIn)
@@ -184,6 +187,20 @@ PluginComponent {
                 text: BatteryService.batteryLevel + "%"
                 font.pixelSize: Theme.fontSizeSmall
             }
+
+            StyledText {
+                text: BatteryService.formatTimeRemaining()
+                visible: showTimeRemaining && !(BatteryService.formatTimeRemaining() === "Unknown")
+                opacity: 0.7
+                font.pixelSize: Theme.fontSizeSmall
+            }
+
+            StyledText {
+                text: BatteryService.isCharging ? "+" : "-" + BatteryService.changeRate.toFixed(1) + "W"
+                visible: showWatts && BatteryService.changeRate
+                opacity: 0.7
+                font.pixelSize: Theme.fontSizeSmall
+            }
         }
     }
 
@@ -199,6 +216,20 @@ PluginComponent {
 
             StyledText {
                 text: BatteryService.batteryLevel + "%"
+                font.pixelSize: Theme.fontSizeSmall
+            }
+
+            StyledText {
+                text: BatteryService.formatTimeRemaining()
+                visible: showTimeRemaining && !(BatteryService.formatTimeRemaining() === "Unknown")
+                opacity: 0.7
+                font.pixelSize: Theme.fontSizeSmall
+            }
+
+            StyledText {
+                text: BatteryService.isCharging ? "+" : "-" + BatteryService.changeRate.toFixed(1) + "W"
+                visible: showWatts && BatteryService.changeRate
+                opacity: 0.7
                 font.pixelSize: Theme.fontSizeSmall
             }
         }

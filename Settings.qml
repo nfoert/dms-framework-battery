@@ -9,25 +9,23 @@ PluginSettings {
 
     StyledText {
         width: parent.width
-        text: "My Plugin Settings"
+        text: "Settings"
         font.pixelSize: Theme.fontSizeLarge
         font.weight: Font.Bold
         color: Theme.surfaceText
     }
 
-    StyledText {
-        width: parent.width
-        text: "Configure your plugin here"
-        font.pixelSize: Theme.fontSizeSmall
-        color: Theme.surfaceVariantText
-        wrapMode: Text.WordWrap
+    ToggleSetting {
+        settingKey: "showTimeRemaining"
+        label: "Show Time Remaining"
+        description: "If the battery time remaining, or time to charge, should be shown in the bar widget"
+        defaultValue: false
     }
 
-    StringSetting {
-        settingKey: "displayText"
-        label: "Display Text"
-        description: "Text shown in the bar"
-        placeholder: "Enter text"
-        defaultValue: "Hello"
+    ToggleSetting {
+        settingKey: "showWatts"
+        label: "Show Watts Used"
+        description: "If the wattage entering or exiting the battery should be shown in the bar widget"
+        defaultValue: false
     }
 }

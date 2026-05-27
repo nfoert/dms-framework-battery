@@ -33,5 +33,8 @@ dms ipc call plugins reload dmsFrameworkBattery
 - [x] Adjust icon colors for charging / discharging / low battery
 - [x] Use `RowLayout` and `ColumnLayout`
 - [x] Fix text alignment in stat cards
-- [ ] Add widget settings for showing time remaining and wattage used
+- [x] Add widget settings for showing time remaining and wattage used
+- [x] Hide remaining for both the bar widget and inside the component if it's zero
+- [ ] Hide wattage on the bar widget if it's zero
 - [ ] Only set the DMS settings for charge limit if the request to set the hardware charge limit succeeded
+- [ ] Add button for fetching the current hardware charge limit
