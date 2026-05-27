@@ -1,6 +1,10 @@
 # dms-framework-battery
 
-This plugin replaces the existing battery widget for DankBar. This adds the same features, as well as adding the ability to dynamically change the battery charge limit on Framework laptops.
+![image](./repo/images/image.png)
+
+This plugin replaces the existing battery widget for [Dank Material Shell](https://github.com/AvengeMedia/DankMaterialShell). This adds the same features, as well as adding the ability to dynamically change the battery charge limit on Framework laptops.
+
+**Note: Charge limit functionality will only work on Framework laptops with `ectool`**
 
 ## Features
 - Bar shows battery precentage and icon
@@ -13,7 +17,18 @@ This plugin replaces the existing battery widget for DankBar. This adds the same
     - Battery health
     - Battery capacity
     - Set PPD profile
-    - Set framework charge limit, with presets (60, 75, 80, 90, 100)
+    - Set framework charge limit, with presets and custom mode (60, 75, 80, 90, 100)
+
+## Installation
+The plugin can be installed from the [DMS plugin repository](https://danklinux.com/plugins).
+
+Alternatively, it can be installed manually:
+```bash
+cd .config/DankMaterialShell/plugins
+git clone https://github.com/nfoert/dms-framework-battery
+```
+
+Then, add the widget to your Dank Bar in `Settings > Dank Bar > Widgets`
 
 ## Development
 ```bash
