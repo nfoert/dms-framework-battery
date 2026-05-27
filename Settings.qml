@@ -28,4 +28,11 @@ PluginSettings {
         description: "If the wattage entering or exiting the battery should be shown in the bar widget"
         defaultValue: false
     }
+
+    ToggleSetting {
+        settingKey: "showChargeLimit"
+        label: "Show Charge Limit"
+        description: "If the charge limit functionality should be available"
+        defaultValue: true
+    }
 }

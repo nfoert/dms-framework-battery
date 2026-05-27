@@ -13,8 +13,9 @@ PluginComponent {
 
     layerNamespacePlugin: "dmsFrameworkBattery"
 
-    property bool showTimeRemaining: pluginData.showTimeRemaining || false
-    property bool showWatts: pluginData.showWatts || false
+    property bool showTimeRemaining: pluginData.showTimeRemaining ?? false
+    property bool showWatts: pluginData.showWatts ?? false
+    property bool showChargeLimit: pluginData.showChargeLimit ?? true
 
     property var iconName: BatteryService.getBatteryIcon()
 
@@ -400,6 +401,7 @@ PluginComponent {
                     // Charge limit
                     ColumnLayout {
                         spacing: Theme.spacingL
+                        visible: showChargeLimit
 
                         // Header
                         RowLayout {
